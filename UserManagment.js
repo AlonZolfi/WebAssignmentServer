@@ -22,11 +22,43 @@ function registerUser(req, res){
 }
 
 function restorePassword(req, res){
-
+    var query = "SELECT password FROM Users " +
+        "WHERE " +
+        "username = " + "'" + req.body.username + "'" +
+        " AND " +
+        "question = " + "'" + req.body.question + "'" +
+        " AND " +
+        "question = " + "'" + req.body.answer + "'";
+    DButilsAzure.execQuery(query)
+        .then(function(result){
+            if(result.length == 1)
+                res.status(200).send(result);
+            else
+                throw "False";
+        })
+        .catch(function(err){
+            console.log(err);
+            res.status(400).send(err);
+        });
 }
 
 function login(req, res){
-
+    var query = "SELECT * FROM Users " +
+        "WHERE " +
+        "username = " + "'" + req.body.username + "'" +
+        " AND " +
+        "password = " + "'" + req.body.password + "'";
+    DButilsAzure.execQuery(query)
+        .then(function(result){
+            if(result.length == 1)
+                res.status(200).send("true"); //need to send token
+            else
+                throw "False";
+        })
+        .catch(function(err){
+            console.log(err);
+            res.status(400).send(err);
+        });
 }
 
 exports.registerUser = registerUser;
