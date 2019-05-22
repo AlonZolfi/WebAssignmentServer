@@ -11,7 +11,6 @@ var poolConfig = {
     log: true
 };
 
-// TODO: edit this
 var connectionConfig = {
     userName: 'adminHilAlon',
     password: 'AH1402ah',
@@ -29,7 +28,6 @@ pool.on('error', function (err) {
     }
 });
 console.log('pool connection on');
-
 
 //----------------------------------------------------------------------------------------------------------------------
 exports.execQuery = function (query) {
