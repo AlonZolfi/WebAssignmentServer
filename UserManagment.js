@@ -21,4 +21,14 @@ function registerUser(req, res){
         });
 }
 
+function restorePassword(req, res){
+
+}
+
+function login(req, res){
+
+}
+
 exports.registerUser = registerUser;
+exports.restorePassword = restorePassword;
+exports.login = login;
