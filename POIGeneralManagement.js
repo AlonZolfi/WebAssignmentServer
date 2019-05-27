@@ -15,7 +15,7 @@ function RandomPOI(req, res){
 }
 
 function listAllPOIs(res){
-    var query = "SELECT * FROM PointOfInterest";
+    var query = "SELECT id,name,image,category FROM PointOfInterest";
     DButilsAzure.execQuery(query)
         .then(function(result){
             res.send(result);

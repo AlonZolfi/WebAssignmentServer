@@ -4,7 +4,7 @@ function rankPOI(req, res){
     var query = "INSERT INTO PointOfInterestReviews (poi_id, username, rank, review) " +
         "Values " +
         "('" + req.body.poi_id+ "'" +
-        ",'" + req.body.username+ "'" +
+        ",'" + req.decoded.username+ "'" +
         ",'" + req.body.rank+ "'" +
         ",'" + req.body.review+ "'" +
         ");";
@@ -22,7 +22,7 @@ function saveFavPOI(req, res){
     var query = "INSERT INTO SavedPointOfInterest (poi_id, username, time) " +
         "Values " +
         "('" + req.body.poi_id+ "'" +
-        ",'" + req.body.username+ "'" +
+        ",'" + req.decoded.username+ "'" +
         ",'" + Date.now() + "'" +
         ");";
     DButilsAzure.execQuery(query)
@@ -38,7 +38,7 @@ function saveFavPOI(req, res){
 function removeFavPOI(req, res){
     var query = "DELETE FROM SavedPointOfInterest " +
         "WHERE " +
-        "username = '" + req.body.username+ "'" +
+        "username = '" + req.decoded.username+ "'" +
         "AND " +
         "poi_id = '" + req.body.poi_id + "'";
     DButilsAzure.execQuery(query)

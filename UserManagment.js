@@ -1,6 +1,26 @@
 var DButilsAzure = require('./DButils');
+var jwt = require('jsonwebtoken');
+const secret = "Hila1705";
 
-function registerUser(req, res){
+function registerUser(req, res) {
+    const usernameRegex = /^[a-zA-Z]+$/;
+    const passwordRegex = /^[a-zA-Z0-9]+$/;
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if (!usernameRegex.test(req.body.username) || !passwordRegex.test(req.body.password) || !emailRegex.test(req.body.email) || req.body.intrests.length<2) {
+        res.status(400).send("Invalid Input");
+        return;
+    }
+    const countryQuery = "SELECT * FROM Countries WHERE name = '" + req.body.country + "'";
+    //const interestsQuery = "SELECT * FROM Categories";
+    DButilsAzure.execQuery(countryQuery)
+
+        .then(function (result) {
+            if(result.length!=1)
+                throw "Country Illegal";
+        })
+        .catch(function (err){
+            res.status(400).send(err);
+        });
     var query = "INSERT INTO Users (username, password, firstname, lastname, city, country, email) " +
         "Values " +
         "('" + req.body.username+ "'" +
@@ -22,7 +42,7 @@ function registerUser(req, res){
 }
 
 function restorePassword(req, res){
-    var query = "SELECT password FROM Users " +
+    var query = "SELECT * FROM Questions " +
         "WHERE " +
         "username = " + "'" + req.body.username + "'" +
         " AND " +
@@ -31,13 +51,20 @@ function restorePassword(req, res){
         "question = " + "'" + req.body.answer + "'";
     DButilsAzure.execQuery(query)
         .then(function(result){
-            if(result.length == 1)
-                res.status(200).send(result);
+            if(result.length == 1) {
+                const passwordQuery = "SELECT password FROM Users WHERE username = '" + req.body.username + "'";
+                DButilsAzure.execQuery(passwordQuery)
+                    .then(function(result){
+                        res.send(result);
+                    })
+                    .catch(function(err){
+                        res.status(400).send(err);
+                    });
+            }
             else
                 throw "False";
         })
         .catch(function(err){
-            console.log(err);
             res.status(400).send(err);
         });
 }
@@ -50,9 +77,13 @@ function login(req, res){
         "password = " + "'" + req.body.password + "'";
     DButilsAzure.execQuery(query)
         .then(function(result){
-            if(result.length == 1)
-                res.status(200).send("true"); //need to send token
-            else
+            if(result.length == 1) {
+                payload = {username: req.body.username};
+                options = {expiresIn: "1d"};
+                const token = jwt.sign(payload, secret, options);
+                res.send(token);
+            }
+        else
                 throw "False";
         })
         .catch(function(err){
