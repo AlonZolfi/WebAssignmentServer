@@ -54,11 +54,13 @@ exports.execQuery = function (query) {
                 });
 
                 dbReq.on('columnMetadata', function (columns) {
+                    properties = [];
                     columns.forEach(function (column) {
                         if (column.colName != null)
                             properties.push(column.colName);
                     });
                 });
+
                 dbReq.on('row', function (row) {
                     var item = {};
                     for (i = 0; i < row.length; i++) {

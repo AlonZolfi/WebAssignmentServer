@@ -2,8 +2,8 @@ var DButilsAzure = require('./DButils');
 
 function RandomPOI(req, res){
     var query = "SELECT TOP 3 id,name,image,category FROM PointOfInterest " +
-        "ORDER BY NEWID()" +
-        "WHERE rank >= '" + req.params.minimalRank +"'";
+        "WHERE rank >= '" + req.params.minimalRank +"' " +
+        "ORDER BY RAND()";
     DButilsAzure.execQuery(query)
         .then(function(result){
             res.send(result);
@@ -27,8 +27,11 @@ function listAllPOIs(res){
 }
 
 function POIdata(req, res){
-    var query = "SELECT * FROM PointOfInterest" +
-        "WHERE id = '" +req.params.POI_id + "'";
+    var query = "SELECT * FROM PointOfInterest " +
+        "WHERE id = '" +req.params.POI_id + "'; " +
+        "SELECT TOP 2 review, rank, CONVERT(VARCHAR(10),tm_created,111) as date FROM PointOfInterestReviews " +
+        "WHERE poi_id = '" +req.params.POI_id + "' " +
+        "ORDER BY tm_created ASC;";
     DButilsAzure.execQuery(query)
         .then(function(result){
             res.send(result);

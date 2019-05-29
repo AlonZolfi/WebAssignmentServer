@@ -18,7 +18,7 @@ app.listen(port, function () {
  * Token authentication
  * MIDDLEWARE
  */
-app.use('/private', function(req,res,next){
+/*app.use('/private', function(req,res,next){
     const token = req.header("x-auth-token");
     // no token
     if (!token)
@@ -31,7 +31,7 @@ app.use('/private', function(req,res,next){
     } catch (exception) {
         res.status(400).send("Invalid token.");
     }
-});
+});*/
 
 
 /**
@@ -61,7 +61,7 @@ app.get('/listAllPOIs', function(req, res){
     POIGeneralManagement.listAllPOIs(req,res);
 });
 
-app.get('/POIdata', function(req, res){
+app.get('/POIdata/:POI_id', function(req, res){
     POIGeneralManagement.POIdata(req,res);
 });
 
@@ -79,6 +79,22 @@ app.post('/private/saveFavPOI', bodyParser ,function(req, res) {
 
 app.delete('/private/removeFavPOI', bodyParser ,function(req, res) {
     UserPOIManagement.removeFavPOI(req,res);
+});
+
+app.post('/private/recommendedPOI', bodyParser ,function(req, res) {
+    UserPOIManagement.recommendedPOI(req,res);
+});
+
+app.post('/private/lastPOIsSaved', bodyParser ,function(req, res) {
+    UserPOIManagement.lastPOIsSaved(req,res);
+});
+
+app.post('/private/saveFavOrderOfPOI', bodyParser ,function(req, res) {
+    UserPOIManagement.saveFavOrderOfPOI(req,res);
+});
+
+app.post('/private/listFavPOI', bodyParser ,function(req, res) {
+    UserPOIManagement.listFavPOI(req,res);
 });
 
 
