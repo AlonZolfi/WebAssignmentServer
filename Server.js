@@ -61,7 +61,7 @@ app.get('/listAllPOIs', function(req, res){
     POIGeneralManagement.listAllPOIs(req,res);
 });
 
-app.get('/POIdata/:POI_id', function(req, res){
+app.get('/POIdata/:poi_id', function(req, res){
     POIGeneralManagement.POIdata(req,res);
 });
 
@@ -106,7 +106,7 @@ app.post('/private/listFavPOI', bodyParser ,function(req, res) {
  * General
  */
 app.get('/listCategories', function(req, res){
-    var query = "SELECT name FROM Categories";
+    var query = "SELECT category_name FROM Categories";
     DButilsAzure.execQuery(query)
         .then(function(result){
             res.send(result);

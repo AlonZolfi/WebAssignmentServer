@@ -131,7 +131,7 @@ function restorePassword(req, res){
                 const passwordQuery = "SELECT password FROM Users WHERE username = '" + req.body.username + "'";
                 DButilsAzure.execQuery(passwordQuery)
                     .then(function(result){
-                        res.status(200).send(result[0]);
+                        res.send(result[0]);
                     })
                     .catch(function(err){
                         res.status(400).send(err);

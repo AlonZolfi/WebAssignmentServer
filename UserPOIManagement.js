@@ -31,7 +31,7 @@ function recommendedPOI(req, res) {
                     res.send(recommendedPOIs);
                 })
                 .catch(function(err){
-                    res.send(err);
+                    res.status(400).send("False");
                 });
         })
         .catch(function(err){
@@ -39,7 +39,22 @@ function recommendedPOI(req, res) {
         });
 }
 
+function validateRank(req) {
+    if(req.body.poi_id === undefined || isNaN(req.body.poi_id) || req.body.rank === undefined|| isNaN(req.body.rank) || req.body.review ===undefined)
+        throw "Illegal Parameters";
+    const num = parseInt(req.body.rank);
+    if(num < 0 || num > 100)
+        throw "Illegal Rank";
+}
+
 function rankPOI(req, res){
+    try{
+        validateRank(req);
+    }
+    catch(error){
+        res.status(400).send(error);
+        return;
+    }
     var query = "SELECT * FROM PointOfInterest WHERE id = '" + req.body.poi_id + "'";
     DButilsAzure.execQuery(query)
         .then(function(result){
@@ -48,11 +63,10 @@ function rankPOI(req, res){
                 var query = "INSERT INTO PointOfInterestReviews (poi_id, username, rank, review, tm_created) " +
                     "Values " +
                     "('" + req.body.poi_id + "'" +
-                    /*",'" + req.decoded.username + "'" +*/
-                    ",'alonnn'" +
+                    ",'" + req.decoded.username + "'" +
                     ",'" + req.body.rank + "'" +
                     ",'" + req.body.review + "'" +
-                    ",'" + Date.now() + "'" +
+                    ",CONVERT(smalldatetime, CURRENT_TIMESTAMP)" +
                     "); ";
                 promises.push(DButilsAzure.execQuery(query));
                 query = "SELECT AVG(rank) as rank FROM PointOfInterestReviews WHERE poi_id = '" + req.body.poi_id + "'";
@@ -66,7 +80,7 @@ function rankPOI(req, res){
                                 res.send("Added Successfully");
                             })
                             .catch(function(err){
-                                res.send(err);
+                                res.status(400).send("False");
                             });
                     })
                     .catch(function(err){
@@ -79,11 +93,19 @@ function rankPOI(req, res){
         });
 }
 
+
 function saveFavPOI(req, res){
-    var query = "SELECT * FROM PointOfInterests WHERE id = '" + req.body.POI_id + "'";
+    try{
+        validateFavPOI(req);
+    }
+    catch(error){
+        res.status(400).send(error);
+        return;
+    }
+    var query = "SELECT * FROM PointOfInterest WHERE id = '" + req.body.poi_id + "'";
     DButilsAzure.execQuery(query)
         .then(function(result){
-            if(result==1){
+            if(result.length==1){
                 query = "INSERT INTO SavedPointOfInterest (poi_id, username, time) " +
                     "Values " +
                     "('" + req.body.poi_id+ "'" +
@@ -92,10 +114,10 @@ function saveFavPOI(req, res){
                     ");";
                 DButilsAzure.execQuery(query)
                     .then(function (result) {
-                        res.send("Saved Successfully");
+                        res.status(201).send("Saved Successfully");
                     })
                     .catch(function (err) {
-                        throw err;
+                        throw "False";
                     });
             }
         })
@@ -104,7 +126,20 @@ function saveFavPOI(req, res){
         });
 }
 
+function validateFavPOI(req) {
+    if(req.body.poi_id === undefined || isNaN(req.body.poi_id))
+        throw("Illegal Parameters")
+}
+
+
 function removeFavPOI(req, res){
+    try{
+        validateFavPOI(req);
+    }
+    catch(error){
+        res.status(400).send(error);
+        return;
+    }
     var query = "DELETE FROM SavedPointOfInterest " +
         "WHERE " +
         "username = '" + req.decoded.username+ "'" +
@@ -115,7 +150,7 @@ function removeFavPOI(req, res){
             res.send("Deleted Successfully");
         })
         .catch(function(err){
-            res.send(err);
+            res.status(400).send("False");
         });
 }
 
@@ -131,7 +166,7 @@ function lastPOIsSaved(req, res){
             res.send(result);
         })
         .catch(function(err){
-            res.send(err);
+            res.status(400).send("False");
         });
 }
 
@@ -148,17 +183,17 @@ function saveFavOrderOfPOI(req, res){
             }
             for (let i = 0; i < req.body.order.length; i++) {
                 query += "INSERT INTO UserFavoriteOrder Values " +
-                "('"+ + req.decoded.username+ "'" +
-                ",'" + req.body.order[i].poi_id+ "'" +
+                "('" + req.decoded.username + "'" +
+                ",'" + req.body.order[i].poi_id + "'" +
                 ",'" + (i+1) + "'" +
                 "); ";
             }
             DButilsAzure.execQuery(query)
                 .then(function(result){
-                    res.send("Added Successfully")
+                    res.status(201).send("Added Successfully")
                 })
                 .catch(function(err){
-                    res.send(err);
+                    res.status(400).send("False");
                 });
         })
         .catch(function(err){
@@ -178,7 +213,7 @@ function listFavPOI(req, res){
             res.send(result);
         })
         .catch(function(err){
-            res.send(err);
+            res.status(400).send(err);
         });
 }
 
