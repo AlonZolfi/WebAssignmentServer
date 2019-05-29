@@ -42,8 +42,18 @@ function POIdata(req, res){
         })
 }
 
-
+function increaseViews(req, res){
+    var query = "Update PointOfInterest SET views = views + 1 WHERE id = '" + req.body.poi_id + "'";
+    DButilsAzure.execQuery(query)
+        .then(function(result){
+            res.send("True");
+        })
+        .catch(function(err){
+            res.send(err);
+        })
+}
 
 exports.RandomPOI = RandomPOI;
 exports.listAllPOIs = listAllPOIs;
 exports.POIdata = POIdata;
+exports.increaseViews = increaseViews;

@@ -31,7 +31,7 @@ function registerUser(req, res) {
             "); ";
     }
     for (let i = 0; i < req.body.authQuestion.length; i++) {
-        query += "INSERT INTO Questions (username, question, answer) " +
+        query += "INSERT INTO UserQuestions (username, question, answer) " +
             "Values " +
             "('" + req.body.username+ "'" +
             ",'" + req.body.authQuestion[i].question+ "'" +
@@ -54,6 +54,18 @@ function registerUser(req, res) {
 }
 
 function validateUserRegister(req){
+    if(req.body.username === undefined || req.body.password === undefined || req.body.firstname === undefined ||
+        req.body.lastname === undefined || req.body.city === undefined || req.body.country === undefined ||
+        req.body.email === undefined || req.body.interests === undefined || req.body.authQuestion === undefined)
+        throw("Illegal parameters");
+    for (let i = 0; i < req.body.interests.length; i++) {
+        if(req.body.interests[i].interest === undefined)
+            throw("Illegal parameters")
+    }
+    for (let i = 0; i < req.body.authQuestion.length; i++) {
+        if(req.body.authQuestion[i].question === undefined || req.body.authQuestion[i].answer=== undefined)
+            throw("Illegal parameters")
+    }
     const usernameRegex = /^[a-zA-Z]+$/;
     if(!usernameRegex.test(req.body.username))
         throw("Username illegal");
@@ -99,20 +111,27 @@ function validateUserRegister(req){
 }
 
 function restorePassword(req, res){
-    var query = "SELECT * FROM Questions " +
+    try{
+        validateRestorePassword(req);
+    }
+    catch(error){
+        res.status(400).send(error);
+        return;
+    }
+    var query = "SELECT * FROM UserQuestions " +
         "WHERE " +
         "username = " + "'" + req.body.username + "'" +
         " AND " +
         "question = " + "'" + req.body.question + "'" +
         " AND " +
-        "question = " + "'" + req.body.answer + "'";
+        "answer = " + "'" + req.body.answer + "'";
     DButilsAzure.execQuery(query)
         .then(function(result){
             if(result.length == 1) {
                 const passwordQuery = "SELECT password FROM Users WHERE username = '" + req.body.username + "'";
                 DButilsAzure.execQuery(passwordQuery)
                     .then(function(result){
-                        res.send(result);
+                        res.status(200).send(result[0]);
                     })
                     .catch(function(err){
                         res.status(400).send(err);
@@ -126,7 +145,19 @@ function restorePassword(req, res){
         });
 }
 
+function validateRestorePassword(req) {
+    if(req.body.username === undefined || req.body.question === undefined || req.body.answer === undefined)
+        throw("Illegal parameters");
+}
+
 function login(req, res){
+    try{
+        validateLogin(req);
+    }
+    catch(error){
+        res.status(400).send(error);
+        return;
+    }
     var query = "SELECT * FROM Users " +
         "WHERE " +
         "username = " + "'" + req.body.username + "'" +
@@ -144,9 +175,13 @@ function login(req, res){
                 throw "False";
         })
         .catch(function(err){
-            console.log(err);
             res.status(400).send(err);
         });
+}
+
+function validateLogin(req) {
+    if(req.body.username === undefined || req.body.password === undefined )
+        throw("Illegal parameters");
 }
 
 exports.registerUser = registerUser;

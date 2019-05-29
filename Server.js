@@ -1,14 +1,14 @@
 var express = require('express');
 var jwt = require('jsonwebtoken');
 var DButilsAzure = require('./DButils');
-var UserManagement = require('./UserManagment');
+var UserManagement = require('./UserManagement');
 var POIGeneralManagement = require('./POIGeneralManagement');
 var UserPOIManagement = require('./UserPOIManagement');
 var bodyParser = require('body-parser').json();
 
 var app = express();
 const secret = "Hila1705";
-var port = 3000;
+var port = process.env.PORT || 3000;
 
 app.listen(port, function () {
     console.log('Example app listening on port ' + port);
@@ -18,7 +18,7 @@ app.listen(port, function () {
  * Token authentication
  * MIDDLEWARE
  */
-/*app.use('/private', function(req,res,next){
+app.use('/private', function(req,res,next){
     const token = req.header("x-auth-token");
     // no token
     if (!token)
@@ -31,7 +31,7 @@ app.listen(port, function () {
     } catch (exception) {
         res.status(400).send("Invalid token.");
     }
-});*/
+});
 
 
 /**
@@ -63,6 +63,10 @@ app.get('/listAllPOIs', function(req, res){
 
 app.get('/POIdata/:POI_id', function(req, res){
     POIGeneralManagement.POIdata(req,res);
+});
+
+app.put('/increaseNumOfViews',bodyParser, function(req, res){
+    POIGeneralManagement.increaseViews(req,res);
 });
 
 
