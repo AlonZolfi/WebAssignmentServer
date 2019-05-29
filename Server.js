@@ -112,7 +112,6 @@ app.get('/listCategories', function(req, res){
             res.send(result);
         })
         .catch(function(err){
-            console.log(err);
             res.send(err);
         })
 });
