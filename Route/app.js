@@ -23,7 +23,7 @@ app.config(function($routeProvider)  {
             templateUrl: 'pages/http/request.html',
             controller : 'httpController as httpCtrl',
         })
-        .when('/logIn', {
+        .when('/login', {
         templateUrl: 'pages/logIn/login.html',
         controller : 'logInController as logInCtrl',
     })
