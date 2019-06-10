@@ -1,11 +1,10 @@
 <h1>My Website</h1>
-<div ng-controller="loginController as loginCtrl">
+<div>
     <form name="loginForm" ng-submit="submit()" novalidate>
         <input type="text" name="user_name" ng-model="user_name" required>
         <span ng-show="loginForm.user_name.$error.required">This is required! </span>
-        <input type="password" name="user_pass" ng-model="user_pass" required ng-minlength="8">
+        <input type="password" name="user_pass" ng-model="user_pass" required>
         <span ng-show="loginForm.user_pass.$error.required">This is required! </span>
-        <span ng-show="loginForm.user_pass.$error.minlength">Minimum length is 8 </span>
         <input ng-disabled="loginForm.$invalid" type="submit" id="submit" value="Submit">
     </form>
     <p>{{ answer }}</p>

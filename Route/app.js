@@ -24,8 +24,8 @@ app.config(function($routeProvider)  {
             controller : 'httpController as httpCtrl',
         })
         .when('/logIn', {
-        templateUrl: 'pages/http/login.html',
-        controller : 'logInController as httpCtrl',
+        templateUrl: 'pages/logIn/login.html',
+        controller : 'logInController as logInCtrl',
     })
         // other
         .otherwise({ redirectTo: '/' });
