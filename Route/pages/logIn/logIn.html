@@ -1,10 +1,13 @@
 <h1>My Website</h1>
 <div>
     <form class="form-style-9" name="loginForm" ng-submit="submit()" novalidate>
-        <input type="text" name="user_name" ng-model="user_name" required>
-        <span ng-show="loginForm.user_name.$error.required">This is required! </span>
-        <input type="password" name="user_pass" ng-model="user_pass" required>
-        <span ng-show="loginForm.user_pass.$error.required">This is required! </span>
+        <h3>Log In</h3>
+        <input type="text" name="user_name" ng-model="user_name" placeholder="User Name" required>
+        <span ng-show="loginForm.user_name.$error.required && loginForm.user_name.$touched">This is required! </span>
+        <input type="password" name="user_pass" ng-model="user_pass" placeholder="Password" required>
+        <span ng-show="loginForm.user_pass.$error.required  && loginForm.user_pass.$touched">This is required! </span>
+        <br/>
+        <br/>
         <input ng-disabled="loginForm.$invalid" type="submit" id="submit" value="Submit">
     </form>
     <p>{{ answer }}</p>

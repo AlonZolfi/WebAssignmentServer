@@ -43,18 +43,41 @@
             <span ng-show="registerForm.password.$invalid && registerForm.password.$touched">Invalid field</span>
         </div>
         <div>
+
+            <select ng-model="country" name="country"
+                    ng-options="x.Name for x in countries" required>
+            </select>
+            <span ng-show="registerForm.country.$error.required && registerForm.country.$touched">This field is required!<br/></span>
+        </div>
+        <div>
             <select id="interests" ng-model="category" name="category"
-                    ng-options="x.category_name for x in interests" multiple>
+                    ng-options="x.category_name for x in interests" multiple required>
             </select>
             <span ng-show="registerForm.category.$error.required && registerForm.category.$touched">This field is required!<br/></span>
         </div>
         <div>
-            <select ng-model="country" name="country"
-                    ng-options="x.Name for x in countries">
+            <select ng-model="question1" name="question1"
+                    ng-options="x.question for x in questions" required>
             </select>
-            <span ng-show="registerForm.country.$error.required && registerForm.country.$touched">This field is required!<br/></span>
+            <span ng-show="registerForm.question1.$error.required && registerForm.question1.$touched">This field is required!<br/></span>
+        </div>
+        <div>
+            <input type="text" name="answer1" ng-model="answer1" placeholder="Answer 1" required>
+            <span ng-show="registerForm.answer1.$error.required && registerForm.answer1.$touched">This field is required!<br/></span>
+            <span ng-show="registerForm.answer1.$invalid && registerForm.answer1.$touched">Invalid field<br/></span>
         </div>
 
+        <div>
+            <select ng-model="question2" name="question2"
+                    ng-options="x.question for x in questions" required>
+            </select>
+            <span ng-show="registerForm.question2.$error.required && registerForm.question2.$touched">This field is required!<br/></span>
+        </div>
+        <div>
+            <input type="text" name="answer2" ng-model="answer2" placeholder="Answer 2" required>
+            <span ng-show="registerForm.answer2.$error.required && registerForm.answer2.$touched">This field is required!<br/></span>
+            <span ng-show="registerForm.answer2.$invalid && registerForm.answer2.$touched">Invalid field<br/></span>
+        </div>
         <div>
             <input ng-disabled="registerForm.$invalid" type="submit" id="submit" value="Submit">
         </div>
