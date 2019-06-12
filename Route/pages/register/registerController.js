@@ -1,6 +1,6 @@
 angular.module("myApp")
     .controller("registerController", function ($scope, $http, $location) {
-        $scope.submit = function(){
+        $scope.logIn = function(){
             likedCategories = [];
             for (let i = 0; i < $scope.category.length; i++) {
                 likedCategories.push({interest:$scope.category[i].category_name});
