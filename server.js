@@ -1,14 +1,16 @@
 var express = require('express');
 var jwt = require('jsonwebtoken');
-var DButilsAzure = require('./DButils');
-var UserManagement = require('./UserManagement');
-var POIGeneralManagement = require('./POIGeneralManagement');
-var UserPOIManagement = require('./UserPOIManagement');
+var DButilsAzure = require('./modules/DButils');
+var UserManagement = require('./modules/UserManagement');
+var POIGeneralManagement = require('./modules/POIGeneralManagement');
+var UserPOIManagement = require('./modules/UserPOIManagement');
 var bodyParser = require('body-parser').json();
 
 var app = express();
 const secret = "Hila1705";
 var port = process.env.PORT || 3000;
+
+//app.use(express.static(__dirname+"/public"));
 
 app.listen(port, function () {
     console.log('Example app listening on port ' + port);
