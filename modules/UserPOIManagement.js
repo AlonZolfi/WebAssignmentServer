@@ -21,7 +21,7 @@ function recommendedPOI(req, res) {
                 .then(function(result){
                     var recommendedPOIs = [];
                     let i = 0;
-                    while(categorySet.size > 0 || recommendedPOIs.length < 2){
+                    while(categorySet.size > 0 && recommendedPOIs.length < 2){
                         if(categorySet.has(result[i].category)) {
                             recommendedPOIs.push(result[i]);
                             categorySet.delete(result[i].category);
@@ -59,37 +59,39 @@ function rankPOI(req, res){
     DButilsAzure.execQuery(query)
         .then(function(result){
             if(result.length==1) {
-                var promises = [];
                 var query = "INSERT INTO PointOfInterestReviews (poi_id, username, rank, review, tm_created) " +
                     "Values " +
-                    "('" + req.body.poi_id + "'" +
+                    "(" + req.body.poi_id +
                     ",'" + req.decoded.username + "'" +
-                    ",'" + req.body.rank + "'" +
+                    "," + req.body.rank +
                     ",'" + req.body.review + "'" +
                     ",CONVERT(smalldatetime, CURRENT_TIMESTAMP)" +
                     "); ";
-                promises.push(DButilsAzure.execQuery(query));
-                query = "SELECT AVG(rank) as rank FROM PointOfInterestReviews WHERE poi_id = '" + req.body.poi_id + "'";
-                promises.push(DButilsAzure.execQuery(query));
-                Promise.all(promises)
-                    .then(function(result){
-                        query = "UPDATE PointOfInterest SET rank ='" + result[1][0].rank +"' " +
-                            "WHERE id = '" + req.body.poi_id + "'";
+                DButilsAzure.execQuery(query)
+                    .then(function() {
+                        query = "SELECT AVG(rank) as rank FROM PointOfInterestReviews WHERE poi_id = " + req.body.poi_id;
                         DButilsAzure.execQuery(query)
-                            .then(function(result){
-                                res.send("Added Successfully");
+                            .then(function (result) {
+                                query = "UPDATE PointOfInterest SET rank =" + result[0].rank + " " +
+                                    "WHERE id = " + req.body.poi_id;
+                                DButilsAzure.execQuery(query)
+                                    .then(function (result) {
+                                        res.send("Added Successfully");
+                                    })
+                                    .catch(function (err) {
+                                        res.status(400).send("False");
+                                    });
                             })
-                            .catch(function(err){
-                                res.status(400).send("False");
-                            });
-                    })
-                    .catch(function(err){
+                            .catch(function (err) {
+                                res.send(err);
+                            })
+                    }).catch(function(err){
                         res.send(err);
-                    })
+                })
             }
         })
         .catch(function(err){
-                res.send(err);
+            res.send(err);
         });
 }
 
@@ -108,9 +110,9 @@ function saveFavPOI(req, res){
             if(result.length==1){
                 query = "INSERT INTO SavedPointOfInterest (poi_id, username, time) " +
                     "Values " +
-                    "('" + req.body.poi_id+ "'" +
+                    "(" + req.body.poi_id +
                     ",'" + req.decoded.username+ "'" +
-                    ",'" + Date.now() + "'" +
+                    ",GETDATE()" +
                     ");";
                 DButilsAzure.execQuery(query)
                     .then(function (result) {
@@ -144,7 +146,7 @@ function removeFavPOI(req, res){
         "WHERE " +
         "username = '" + req.decoded.username+ "'" +
         "AND " +
-        "poi_id = '" + req.body.poi_id + "'";
+        "poi_id = " + req.body.poi_id + "";
     DButilsAzure.execQuery(query)
         .then(function(result){
             res.send("Deleted Successfully");
@@ -183,10 +185,10 @@ function saveFavOrderOfPOI(req, res){
             }
             for (let i = 0; i < req.body.order.length; i++) {
                 query += "INSERT INTO UserFavoriteOrder Values " +
-                "('" + req.decoded.username + "'" +
-                ",'" + req.body.order[i].poi_id + "'" +
-                ",'" + (i+1) + "'" +
-                "); ";
+                    "('" + req.decoded.username + "'" +
+                    "," + req.body.order[i].poi_id +
+                    "," + (i+1) +
+                    "); ";
             }
             DButilsAzure.execQuery(query)
                 .then(function(result){
@@ -202,6 +204,21 @@ function saveFavOrderOfPOI(req, res){
 }
 
 function listFavPOI(req, res){
+    var query = "SELECT id,name,image,category,rank " +
+        "FROM SavedPointOfInterest " +
+        "JOIN PointOfInterest " +
+        "ON SavedPointOfInterest.poi_id=PointOfInterest.id " +
+        "WHERE username = '" + req.decoded.username + "'";
+    DButilsAzure.execQuery(query)
+        .then(function(result){
+            res.send(result);
+        })
+        .catch(function(err){
+            res.status(400).send(err);
+        });
+}
+
+function FavPOIOrder(req, res){
     var query = "SELECT id,name,image,category " +
         "FROM UserFavoriteOrder " +
         "JOIN PointOfInterest " +
@@ -224,3 +241,4 @@ exports.recommendedPOI = recommendedPOI;
 exports.lastPOIsSaved = lastPOIsSaved;
 exports.saveFavOrderOfPOI = saveFavOrderOfPOI;
 exports.listFavPOI = listFavPOI;
+exports.FavPOIOrder = FavPOIOrder;

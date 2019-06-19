@@ -27,7 +27,7 @@ function validateRandom(req) {
 
 
 function listAllPOIs(req, res){
-    var query = "SELECT id,name,image,category FROM PointOfInterest";
+    var query = "SELECT id,name,image,category,rank FROM PointOfInterest";
     DButilsAzure.execQuery(query)
         .then(function(result){
             res.send(result);
@@ -42,7 +42,7 @@ function POIdata(req, res){
         "WHERE id = '" +req.params.POI_id + "'; " +
         "SELECT TOP 2 review, rank, convert(varchar(10),tm_created,120)as date FROM PointOfInterestReviews " +
         "WHERE poi_id = '" +req.params.POI_id + "' " +
-        "ORDER BY tm_created ASC;";
+        "ORDER BY tm_created DESC;";
     DButilsAzure.execQuery(query)
         .then(function(result){
             res.send(result);

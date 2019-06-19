@@ -11,6 +11,8 @@ const secret = "Hila1705";
 var port = process.env.PORT || 3000;
 
 //app.use(express.static(__dirname+"/public"));
+var cors = require('cors');
+app.use(cors());
 
 app.listen(port, function () {
     console.log('Example app listening on port ' + port);
@@ -69,7 +71,7 @@ app.get('/listAllPOIs', function(req, res){
     POIGeneralManagement.listAllPOIs(req,res);
 });
 
-app.get('/POIdata/:poi_id', function(req, res){
+app.get('/POIdata/:POI_id', function(req, res){
     POIGeneralManagement.POIdata(req,res);
 });
 
@@ -89,7 +91,7 @@ app.post('/private/saveFavPOI', bodyParser ,function(req, res) {
     UserPOIManagement.saveFavPOI(req,res);
 });
 
-app.delete('/private/removeFavPOI', bodyParser ,function(req, res) {
+app.post('/private/removeFavPOI', bodyParser ,function(req, res) {
     UserPOIManagement.removeFavPOI(req,res);
 });
 
@@ -107,6 +109,10 @@ app.post('/private/saveFavOrderOfPOI', bodyParser ,function(req, res) {
 
 app.post('/private/listFavPOI', bodyParser ,function(req, res) {
     UserPOIManagement.listFavPOI(req,res);
+});
+
+app.post('/private/FavPOIOrder', bodyParser ,function(req, res) {
+    UserPOIManagement.FavPOIOrder(req,res);
 });
 
 
