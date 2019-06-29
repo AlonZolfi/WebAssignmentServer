@@ -86,7 +86,7 @@ function rankPOI(req, res){
                                 res.send(err);
                             })
                     }).catch(function(err){
-                        res.send(err);
+                        res.status(400).send(err);
                 })
             }
         })
