@@ -129,3 +129,14 @@ app.get('/listCategories', function(req, res){
             res.send(err);
         })
 });
+
+app.get('/listCountries', function(req, res){
+    var query = "SELECT name FROM Countries";
+    DButilsAzure.execQuery(query)
+        .then(function(result){
+            res.send(result);
+        })
+        .catch(function(err){
+            res.send(err);
+        })
+})
